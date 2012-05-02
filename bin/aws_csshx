@@ -3,8 +3,8 @@
 require 'right_aws'
 
 EC2_PRIVATE_KEY = ENV['EC2_PRIVATE_KEY']
-AWS_ACCESS_KEY = ENV['AWS_ACCESS_KEY']
-AWS_SECRET_KEY = ENV['AWS_SECRET_KEY']
+AWS_ACCESS_KEY = ENV['AWS_ACCESS_KEY'] || ENV['AMAZON_ACCESS_KEY_ID']
+AWS_SECRET_KEY = ENV['AWS_SECRET_KEY'] || ENV['AMAZON_SECRET_ACCESS_KEY']
 
 def group
   @group ||= ARGV[0]
@@ -30,4 +30,4 @@ abort('csshx is required') unless csshx_exists?
 abort('CERT_LOCATION, AWS_ACCESS_KEY and AWS_SECRET_KEY environment variables must all be set') unless env_variables_exist?
 abort('Must specify a group') if group.nil?
 
-`csshx --login root --ssh_args="-i #{EC2_PRIVATE_KEY}" #{aws_servers.join(' ')}`
+`csshx --login root --ssh_args='-i #{EC2_PRIVATE_KEY}' #{aws_servers.join(' ')}`
