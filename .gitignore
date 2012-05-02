@@ -1,0 +1,6 @@
+pkg
+doc
+Manifest
+.swp
+.swo
+tmp/*

@@ -1,0 +1,33 @@
+#!/usr/bin/env ruby
+
+require 'right_aws'
+
+EC2_PRIVATE_KEY = ENV['EC2_PRIVATE_KEY']
+AWS_ACCESS_KEY = ENV['AWS_ACCESS_KEY']
+AWS_SECRET_KEY = ENV['AWS_SECRET_KEY']
+
+def group
+  @group ||= ARGV[0]
+end
+
+def csshx_exists?
+  `which csshx > /dev/null 2>&1`
+end
+
+def env_variables_exist?
+  EC2_PRIVATE_KEY && AWS_ACCESS_KEY && AWS_SECRET_KEY
+end
+
+def aws_servers
+  @ec2_api ||= RightAws::Ec2.new(AWS_ACCESS_KEY, AWS_SECRET_KEY)
+
+  @ec2_api.describe_instances.reject{|i| i[:aws_state] != "running"}.map do |instance|
+    instance[:dns_name] if instance[:groups].map{|g| g[:group_name]}.include?(group)
+  end.compact
+end
+
+abort('csshx is required') unless csshx_exists?
+abort('CERT_LOCATION, AWS_ACCESS_KEY and AWS_SECRET_KEY environment variables must all be set') unless env_variables_exist?
+abort('Must specify a group') if group.nil?
+
+`csshx --login root --ssh_args="-i #{EC2_PRIVATE_KEY}" #{aws_servers.join(' ')}`
