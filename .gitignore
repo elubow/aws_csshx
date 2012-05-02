@@ -1,6 +1,7 @@
-pkg
-doc
+pkg/*
+*.gem
+.bundle
+*.swo
+*.swp
 Manifest
-.swp
-.swo
-tmp/*
+.rvmrc
