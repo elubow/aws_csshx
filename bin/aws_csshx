@@ -1,10 +1,15 @@
 #!/usr/bin/env ruby
 
-require 'right_aws'
+$LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
+require 'aws_csshx'
 
-EC2_PRIVATE_KEY = ENV['EC2_PRIVATE_KEY']
+# Set the environment variables
 AWS_ACCESS_KEY = ENV['AWS_ACCESS_KEY'] || ENV['AMAZON_ACCESS_KEY_ID']
 AWS_SECRET_KEY = ENV['AWS_SECRET_KEY'] || ENV['AMAZON_SECRET_ACCESS_KEY']
+
+exit AwsCsshx::Application.run!(*ARGV)
+
+
 
 def group
   @group ||= ARGV[0]

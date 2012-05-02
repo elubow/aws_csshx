@@ -1,3 +1,2 @@
-module AwsCsshx
-  # Your code goes here...
-end
+require 'aws_csshx/application'
+require 'aws_csshx/configuration'
