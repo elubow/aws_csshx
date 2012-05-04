@@ -12,6 +12,10 @@ module AwsCsshx
         @options[:aws_access_key] and @options[:aws_secret_key] and @options[:aws_region] and File.exists?(@options[:ec2_private_key])
       end
 
+      def has_servers?(list)
+        server_list.count > 0 ? true : false
+      end
+
       def run!(*arguments)
         @options = {}
 
@@ -44,13 +48,25 @@ module AwsCsshx
             @options[:help] = true
           end
 
+          # Show the version screen and bounce if requested
+          if @options[:version]
+            puts "#{$0} #{AwsCsshx::VERSION}"
+            return 0
+          end
+
+          # Show the help screen and bounce if requested
+          if @options[:help]
+            puts command_line_options.opts
+            return 0
+          end
+
           # Stop here without all our AWS settings
           abort("Invalid AWS settings") unless aws_settings_exist?
 
           abort("Cannot continue without AWS security group (-g)") unless @options[:group]
           @server_list = aws_server_list_by_group @options[:group]
 
-          if @server_list.count > 0
+          if has_servers? @server_list
             `csshx --login #{@options[:login]} --ssh_args='-i #{@options[:ec2_private_key]}' #{@server_list.join(' ')}`
             puts "Opened connections to #{@server_list.count} servers in the '#{@options[:group]}' security group."
           else

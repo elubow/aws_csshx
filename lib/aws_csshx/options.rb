@@ -15,6 +15,7 @@ module AwsCsshx
       @opts = OptionParser.new do |o|
           o.banner = "Usage: #{File.basename($0)} <file1> <file2> ..."
 
+          o.separator ""
           o.separator "AWS Options"
 
           options[:group] = 'default'
@@ -22,15 +23,16 @@ module AwsCsshx
               options[:group] = group
           end
 
-          o.on( '-i', '--aws-identity <identity>', 'AWS security group name to use for the csshX sessions' ) do |identity|
-              options[:aws_identity] = identity
+          o.on( '-i', '--aws-identity <identity>', 'Use this keyfile as your SSH private key' ) do |identity|
+              options[:ec2_private_key] = identity
           end
 
-          o.on( '-r', '--aws-region <region>', 'AWS security group name to use for the csshX sessions' ) do |region|
+          o.on( '-r', '--aws-region <region>', 'AWS region to query for the csshX sessions (default: us-east-1)' ) do |region|
               options[:aws_region] = region
           end
 
           o.separator ""
+          o.separator "csshX Options"
 
           options[:login] = 'root'
           o.on( '-l', '--login <login>', 'User login to use for the csshX sessions (default: root)' ) do |login|
@@ -50,7 +52,7 @@ module AwsCsshx
           o.separator ""
 
           options[:conf] = "#{Etc.getpwuid.dir}/.csshrc"
-          o.on( '-c', '--conf <file>', 'aws_csshX config file (defaults to .csshrc)' ) do |file|
+          o.on( '-c', '--conf <file>', 'aws_csshX config file (default: .csshrc)' ) do |file|
               if File.exists?(file)
                   options[:conf] = file
               else
@@ -71,6 +73,7 @@ module AwsCsshx
           o.separator "Examples:"
           o.separator "  Cluster SSH to all machines in the 'utility' security group:"
           o.separator "    #{File.basename($0)} -g utility"
+          o.separator ""
       end
 
       begin
