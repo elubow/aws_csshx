@@ -74,7 +74,7 @@ module AwsCsshx
           end
         rescue Exception => e
           puts "Error: #{e.inspect}"
-          puts "Trace: #{e.backtrace}"
+          puts "Trace: #{e.backtrace.join('\n')}"
         end
 
         # Exit cleanly
