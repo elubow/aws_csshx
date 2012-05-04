@@ -13,7 +13,7 @@ module AwsCsshx
       end
 
       def has_servers?(list)
-        server_list.count > 0 ? true : false
+        list.count > 0 ? true : false
       end
 
       def run!(*arguments)
