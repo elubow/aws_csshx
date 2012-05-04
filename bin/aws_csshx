@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+# Add our local lib directory
 $LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 require 'aws_csshx'
 
