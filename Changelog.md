@@ -1,3 +1,7 @@
+### aws_csshx 0.1.2 2012-05-04
+
+ * Bug with listing servers
+
 ### aws_csshx 0.1.1 2012-05-04
 
  * Added command line switches (Eric Lubow)
