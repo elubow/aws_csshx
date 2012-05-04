@@ -1,6 +1,8 @@
 # AWS CSSHX Wrapper
-Highlight CQL syntaxes inside the vim editor.
+
+This is a wrapper script for ClusterSSHX (csshx).  It allows the user the ability to ssh to all machines in an AWS security group using a specific key and user for those machines.
 
 ## Installation
-Install the gem
+
+    gem install aws_csshx
 

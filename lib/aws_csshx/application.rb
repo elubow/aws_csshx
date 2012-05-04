@@ -1,13 +1,3 @@
-require 'etc'
-
-class Hash
-  def symbolize_keys!
-    hsh = {}
-    self.each_pair { |k,v|  hsh[k.downcase.to_sym] = v }
-    hsh
-  end
-end
-
 module AwsCsshx
   class Application
     attr :options
@@ -40,9 +30,8 @@ module AwsCsshx
           end
 
           command_line_options = AwsCsshx::Options.new(arguments)
-          p @options
-          @options.merge!(command_line_options[:options]).symbolize_keys!
-          p @options
+          @options.merge!(command_line_options[:options])
+          @options = AwsCsshx::Misc.symbolize_hash_keys(@options)
 
           # Load the new config file if different
           if conf_file != @options[:conf] and File.exists?(conf_file)
@@ -58,10 +47,15 @@ module AwsCsshx
           # Stop here without all our AWS settings
           abort("Invalid AWS settings") unless aws_settings_exist?
 
-          @server_list = aws_server_list_by_group options[:group]
+          abort("Cannot continue without AWS security group (-g)") unless @options[:group]
+          @server_list = aws_server_list_by_group @options[:group]
 
-          `csshx --login root --ssh_args='-i #{options[:ec2_private_key]}' #{@server_list.join(' ')}`
-
+          if @server_list.count > 0
+            `csshx --login #{@options[:login]} --ssh_args='-i #{@options[:ec2_private_key]}' #{@server_list.join(' ')}`
+            puts "Opened connections to #{@server_list.count} servers in the '#{@options[:group]}' security group."
+          else
+            puts "No servers found...bailing out!"
+          end
         rescue Exception => e
           puts "Error: #{e.inspect}"
           puts "Trace: #{e.backtrace}"
@@ -72,7 +66,7 @@ module AwsCsshx
       end
 
       def aws_server_list_by_group(group)
-        @ec2_api ||= RightAws::Ec2.new(self.options[:aws_access_key], self.options[:aws_secret_key])
+        @ec2_api ||= RightAws::Ec2.new(@options[:aws_access_key], @options[:aws_secret_key])
 
         @ec2_api.describe_instances.reject{|i| i[:aws_state] != "running"}.map do |instance|
           instance[:dns_name] if instance[:groups].map{|g| g[:group_name]}.include?(group)
@@ -82,4 +76,3 @@ module AwsCsshx
     end
   end
 end
-
