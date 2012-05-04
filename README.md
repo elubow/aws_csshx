@@ -9,6 +9,7 @@ This is a wrapper script for ClusterSSHX (csshx).  It allows the user the abilit
 ### Configuration
 
 The easist way to configure this gem is to add the following 4 lines to your _~/.csshrc_ (replace with your values):
+
     aws_region = us-east-1
     aws_access_key = AAAAAAAAAAAAAAAAAAAA
     aws_secret_key = TaaaaaLNiYbbbbbJm6uuqphcccccXtZydddddDfd
