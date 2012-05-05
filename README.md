@@ -22,3 +22,8 @@ The most common use/case of _aws_csshx_ is to just ssh into a security group.
 For instance, to SSH into the entire *utility* security group as *root*, do the following:
 
     aws_csshx -g 'utility' -l root
+
+## Authors
+
+ * Russell Bradberry <@devdazed>
+ * Eric Lubow <@elubow>
