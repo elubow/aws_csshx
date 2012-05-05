@@ -1,6 +1,6 @@
 module AwsCsshx
   class Options < Hash
-    attr_reader :opts, :orig_args
+    attr_reader :opts, :orig_args, :parsed
 
     def initialize(args)
       super()
@@ -9,6 +9,7 @@ module AwsCsshx
 
       @orig_args = args.clone
 
+      @parsed = false
       options = {}
 
       require 'optparse'
@@ -29,6 +30,10 @@ module AwsCsshx
 
           o.on( '-r', '--aws-region <region>', 'AWS region to query for the csshX sessions (default: us-east-1)' ) do |region|
               options[:aws_region] = region
+          end
+
+          o.on( '-H', '--hosts x,y,z', Array, 'Additional hosts to add to the group (comma separated)' ) do |server_list|
+              options[:additional_servers] = server_list
           end
 
           o.separator ""
@@ -84,6 +89,11 @@ module AwsCsshx
           @opts.parse(args, flags={ :delete_invalid_opts => true })
           self[:options] = options
       end
+      @parsed = true
+    end
+
+    def parsed?
+      @parsed
     end
   end
 end

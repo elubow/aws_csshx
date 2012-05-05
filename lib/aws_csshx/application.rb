@@ -43,7 +43,7 @@ module AwsCsshx
           end
 
           # Deal with the option issues
-          if command_line_options[:invalid_argument]
+          if command_line_options.parsed? and command_line_options[:invalid_argument]
             $stderr.puts command_line_options[:invalid_argument]
             @options[:help] = true
           end
@@ -65,10 +65,15 @@ module AwsCsshx
 
           abort("Cannot continue without AWS security group (-g)") unless @options[:group]
           @server_list = aws_server_list_by_group @options[:group]
+          aws_server_count = @server_list.count
+
+          # Add any additional servers from the command line to the pool
+          add_servers_from_command_line if @options[:additional_servers]
 
           if has_servers? @server_list
             `csshx --login #{@options[:login]} --ssh_args='-i #{@options[:ec2_private_key]}' #{@server_list.join(' ')}`
-            puts "Opened connections to #{@server_list.count} servers in the '#{@options[:group]}' security group."
+            puts "Opened connections to #{aws_server_count} servers in the '#{@options[:group]}' security group."
+            puts "Opened connections to #{@options[:additional_servers].count} servers from command-line options." if @options[:additional_servers]
           else
             puts "No servers found...bailing out!"
           end
@@ -79,6 +84,10 @@ module AwsCsshx
 
         # Exit cleanly
         return 0
+      end
+
+      def add_servers_from_command_line
+        @server_list.push(@options[:additional_servers]).flatten!.uniq! if @options[:additional_servers]
       end
 
       def aws_server_list_by_group(group)
