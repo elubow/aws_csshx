@@ -1,6 +1,7 @@
 ### aws_csshx 0.1.4 2012-05-21
 
  * Better error handling (Eric Lubow)
+ * Better system call checking (Eric Lubow)
 
 ### aws_csshx 0.1.3 2012-05-05
 

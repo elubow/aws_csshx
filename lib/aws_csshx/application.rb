@@ -73,7 +73,8 @@ module AwsCsshx
           add_servers_from_command_line if @options[:additional_servers]
 
           if has_servers? @server_list
-            `csshx --login #{@options[:login]} --ssh_args='-i #{@options[:ec2_private_key]}' #{@server_list.join(' ')}`
+            csshx_switches = create_csshx_switches
+            `csshx #{[csshx_switches, @server_list].join(' ')}`
             puts "Opened connections to #{aws_server_count} servers in the '#{@options[:group]}' security group."
             puts "Opened connections to #{@options[:additional_servers].count} servers from command-line options." if @options[:additional_servers]
           else
@@ -90,6 +91,18 @@ module AwsCsshx
 
         # Exit cleanly
         return 0
+      end
+
+      def create_csshx_switches
+        switches = []
+
+        # Set the basics by default
+        switches.push('--login', @options[:login])
+        switches.push("--ssh_args='-i #{@options[:ec2_private_key]}'")
+
+        # Add the additional stuff specific to csshx
+        switches.push('--iterm2', @options[:iterm2]) if @options[:iterm2]
+        switches.push(@options[:csshx_opts]) if @options[:csshx_opts]
       end
 
       def add_servers_from_command_line
