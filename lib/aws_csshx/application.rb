@@ -20,7 +20,7 @@ module AwsCsshx
         @options = {}
 
         # No need to go further unless csshX exists
-        abort('csshX file is required') unless csshx_exists?
+        raise OptionsError, "csshX file is required" unless csshx_exists?
 
         begin
           # First we load the config file and then process the command line
@@ -61,9 +61,10 @@ module AwsCsshx
           end
 
           # Stop here without all our AWS settings
-          abort("Invalid AWS settings") unless aws_settings_exist?
+          raise OptionsError, "Invalid AWS settings" unless aws_settings_exist?
 
-          abort("Cannot continue without AWS security group (-g)") unless @options[:group]
+          raise OptionsError, "Cannot continue without AWS security group (-g)" unless @options[:group]
+
           @server_list = aws_server_list_by_group @options[:group]
           aws_server_count = @server_list.count
 
@@ -75,11 +76,15 @@ module AwsCsshx
             puts "Opened connections to #{aws_server_count} servers in the '#{@options[:group]}' security group."
             puts "Opened connections to #{@options[:additional_servers].count} servers from command-line options." if @options[:additional_servers]
           else
-            puts "No servers found...bailing out!"
+            raise OptionsError, "No servers found in '#{@options[:group]}' group...bailing out!"
           end
+
+        rescue OptionsError => e
+          puts "Error: #{e}"
+
         rescue Exception => e
-          puts "Error: #{e.inspect}"
-          puts "Trace: #{e.backtrace.join('\n')}"
+          puts "#{e.class} Error: #{e}"
+          puts "Backtrace:\n#{e.backtrace.join("\n")}"
         end
 
         # Exit cleanly

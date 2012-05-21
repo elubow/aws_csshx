@@ -1,4 +1,6 @@
 module AwsCsshx
+  class OptionsError < StandardError; end
+
   class Options < Hash
     attr_reader :opts, :orig_args, :parsed
 
