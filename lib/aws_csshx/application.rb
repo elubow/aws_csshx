@@ -6,6 +6,7 @@ module AwsCsshx
 
       def csshx_exists?
         `which csshx > /dev/null 2>&1`
+        $?.success?
       end
 
       def aws_settings_exist?
