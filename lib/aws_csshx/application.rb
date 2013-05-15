@@ -66,16 +66,24 @@ module AwsCsshx
 
           raise OptionsError, "Cannot continue without AWS security group (-g)" unless @options[:group]
 
-          @server_list = aws_server_list_by_group @options[:group]
-          aws_server_count = @server_list.count
+          @server_list = []
+          if @options[:group].respond_to?('each')
+            @options[:group].each {|grp|  @server_list.push(aws_server_list_by_group grp)}
+          else
+            @server_list = aws_server_list_by_group @options[:group]
+          end
 
           # Add any additional servers from the command line to the pool
           add_servers_from_command_line if @options[:additional_servers]
 
+          # De-duplicateify the list
+          @server_list.flatten!.uniq!
+
+          aws_server_count = @server_list.count
           if has_servers? @server_list
             csshx_switches = create_csshx_switches
             `csshx #{[csshx_switches, @server_list].join(' ')}`
-            puts "Opened connections to #{aws_server_count} servers in the '#{@options[:group]}' security group."
+            puts "Opened connections to #{aws_server_count} servers in the following security groups: #{@options[:group]}"
             puts "Opened connections to #{@options[:additional_servers].count} servers from command-line options." if @options[:additional_servers]
           else
             raise OptionsError, "No servers found in '#{@options[:group]}' group...bailing out!"

@@ -22,7 +22,7 @@ module AwsCsshx
           o.separator "AWS Options"
 
           options[:group] = 'default'
-          o.on( '-g', '--group <group>', 'AWS security group name to use for the csshX sessions' ) do |group|
+          o.on( '-g', '--group group1,group2,group3', Array, 'AWS security group name to use for the csshX sessions (comma separated)' ) do |group|
               options[:group] = group
           end
 

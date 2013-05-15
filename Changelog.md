@@ -1,3 +1,7 @@
+### aws_csshx 0.1.5 2013-05-15
+
+ * Allow to SSH to multiple groups (Eric Lubow)
+
 ### aws_csshx 0.1.4 2012-05-21
 
  * Better error handling (Eric Lubow)
