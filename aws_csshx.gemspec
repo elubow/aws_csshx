@@ -10,7 +10,10 @@ Gem::Specification.new do |s|
   s.email       = ["eric@lubow.org"]
   s.homepage    = ""
   s.summary     = %q{csshx wrapper that interacts with your AWS account for group ssh sessions}
-  s.description = %q{csshx wrapper that interacts with your AWS account for group ssh sessions}
+  s.description = %q{
+    csshx wrapper that interacts with your AWS account for group ssh sessions. You can even pass in multiple security groups
+    to access all hosts within those groups.
+  }
 
   s.add_dependency 'right_aws'
 
